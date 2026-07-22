@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise Dual-Licensing Engine Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --accent-purple: #8b5cf6;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 2rem; padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .brand { font-size: 1.5rem; font-weight: 800; background: linear-gradient(to right, #a78bfa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .badge-status {
+      background: rgba(16, 185, 129, 0.2); border: 1px solid var(--accent-green);
+      color: var(--accent-green); padding: 0.5rem 1rem; border-radius: 9999px;
+      font-weight: 600; font-size: 0.875rem;
+    }
+
+    .grid-stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem; margin-bottom: 2rem;
+    }
+    .card {
+      background: var(--card-bg); backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border); border-radius: 1rem; padding: 1.5rem;
+    }
+    .card-title { font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .card-value { font-size: 2rem; font-weight: 800; margin-top: 0.5rem; color: var(--text-main); }
+    .card-sub { font-size: 0.875rem; color: var(--accent-cyan); margin-top: 0.25rem; }
+
+    .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: #cbd5e1; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
+    th, td { text-align: left; padding: 1rem; border-bottom: 1px solid var(--card-border); font-size: 0.875rem; }
+    th { color: var(--text-muted); font-weight: 600; }
+    td { color: var(--text-main); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">⚡️ Enterprise Dual-Licensing Engine</div>
+      <div class="badge-status" id="license-status">Verifying...</div>
+    </header>
+
+    <div class="grid-stats">
+      <div class="card">
+        <div class="card-title">Licensed Customer</div>
+        <div class="card-value" id="customer-name">--</div>
+        <div class="card-sub" id="license-tier">Tier: --</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Seats & Node Quota</div>
+        <div class="card-value" id="seat-quota">--</div>
+        <div class="card-sub">Ed25519 Asymmetric Verified</div>
+      </div>
+      <div class="card">
+        <div class="card-title">License Expiration</div>
+        <div class="card-value" id="days-remaining">--</div>
+        <div class="card-sub" id="expires-date">--</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Tasks Processed</div>
+        <div class="card-value" id="tasks-processed">--</div>
+        <div class="card-sub">Prometheus Metrics Live</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+      <div class="section-title">🛡 Active Enterprise Features</div>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
+        <div style="background: rgba(139, 92, 246, 0.2); border: 1px solid #8b5cf6; padding: 0.5rem 1rem; border-radius: 0.5rem;">SAML / SSO Authentication</div>
+        <div style="background: rgba(6, 182, 212, 0.2); border: 1px solid #06b6d4; padding: 0.5rem 1rem; border-radius: 0.5rem;">Compliance Audit Logger</div>
+        <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; padding: 0.5rem 1rem; border-radius: 0.5rem;">Role-Based Access Control (RBAC)</div>
+        <div style="background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; padding: 0.5rem 1rem; border-radius: 0.5rem;">Telemetry & Quota Enforcer</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">📜 Real-time Enterprise Audit Logs</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Actor</th>
+            <th>Action</th>
+            <th>Resource</th>
+          </tr>
+        </thead>
+        <tbody id="audit-table">
+          <tr><td colspan="4">Loading audit logs...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function loadStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+
+        if (data.isUnlocked) {
+          document.getElementById('license-status').innerText = 'COMMERCIAL LICENSE ACTIVE ✅';
+          const p = data.license.payload;
+          document.getElementById('customer-name').innerText = p.customerName;
+          document.getElementById('license-tier').innerText = 'Tier: ' + p.tier.toUpperCase();
+          document.getElementById('seat-quota').innerText = p.maxSeats + ' Seats / ' + p.maxNodes + ' Nodes';
+          document.getElementById('days-remaining').innerText = data.license.daysRemaining + ' Days';
+          document.getElementById('expires-date').innerText = 'Expires: ' + p.expiresAt;
+        } else {
+          document.getElementById('license-status').innerText = 'COMMUNITY MODE (AGPL-3.0)';
+          document.getElementById('license-status').style.borderColor = '#f59e0b';
+          document.getElementById('license-status').style.color = '#f59e0b';
+        }
+
+        document.getElementById('tasks-processed').innerText = data.metrics.totalProcessed;
+
+        const table = document.getElementById('audit-table');
+        table.innerHTML = data.auditLogs.map(log => `
+          <tr>
+            <td>${new Date(log.timestamp).toLocaleString()}</td>
+            <td>${log.actor}</td>
+            <td><strong>${log.action}</strong></td>
+            <td>${log.resource}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error('Failed to load status:', err);
+      }
+    }
+
+    loadStatus();
+    setInterval(loadStatus, 5000);
+  </script>
+</body>
+</html>
