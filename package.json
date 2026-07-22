@@ -1,0 +1,20 @@
+{
+  "name": "open-core-dual-license-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production Open-Core Dual-Licensing Monorepo Template",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node apps/demo/dist/index.js",
+    "generate-license": "ts-node scripts/generate-license.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

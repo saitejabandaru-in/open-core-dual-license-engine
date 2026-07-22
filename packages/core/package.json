@@ -1,0 +1,10 @@
+{
+  "name": "@open-core/core",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "build": "tsc"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@open-core/demo",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "dependencies": {
+    "@open-core/core": "*",
+    "@open-core/enterprise": "*"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts"
+  }
+}

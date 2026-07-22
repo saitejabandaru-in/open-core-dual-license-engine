@@ -1,0 +1,13 @@
+{
+  "name": "@open-core/enterprise",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "license": "SEE LICENSE IN LICENSE-COMMERCIAL.md",
+  "dependencies": {
+    "@open-core/core": "*"
+  },
+  "scripts": {
+    "build": "tsc"
+  }
+}
