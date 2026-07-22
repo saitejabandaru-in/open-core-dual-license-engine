@@ -75,15 +75,20 @@ flowchart TD
 
 ## 🌐 Web Admin Dashboard & REST API
 
-Launch the live visual management portal:
-
+### Local Development Mode
+When running on your local machine:
 ```bash
 npx tsx apps/dashboard/src/server.ts
 ```
-
-- 🖥 **Web Portal**: `http://localhost:3000`
+- 🖥 **Local Web Portal**: `http://localhost:3000`
 - 📊 **Prometheus Metrics**: `http://localhost:3000/metrics`
 - 🔌 **Status REST API**: `http://localhost:3000/api/status`
+
+### Production Cloud Deployment Mode (Vercel / Render / AWS)
+Set `HOST_URL` and `PORT` environment variables in your cloud dashboard (e.g. `HOST_URL=https://your-app-name.onrender.com`):
+- 🖥 **Production Cloud Portal**: `https://your-domain.com`
+- 📊 **Prometheus Metrics**: `https://your-domain.com/metrics`
+- 🔌 **Status REST API**: `https://your-domain.com/api/status`
 
 ---
 

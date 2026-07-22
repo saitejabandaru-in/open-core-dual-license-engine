@@ -4,6 +4,7 @@ import * as path from 'path';
 import { EnterpriseEngine, AsymmetricLicenseManager } from '../../../packages/enterprise/src/index';
 
 const port = process.env.PORT || 3000;
+const hostUrl = process.env.HOST_URL || `http://localhost:${port}`;
 
 // Initialize Keypair & Engine instance
 const { publicKey, privateKey } = AsymmetricLicenseManager.generateKeyPair();
@@ -70,7 +71,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`\n🌐 [ENTERPRISE DASHBOARD LIVE] http://localhost:${port}`);
-  console.log(`📊 Prometheus Metrics API: http://localhost:${port}/metrics`);
-  console.log(`🔌 Status REST API: http://localhost:${port}/api/status\n`);
+  console.log(`\n🌐 [ENTERPRISE DASHBOARD LIVE] ${hostUrl}`);
+  console.log(`📊 Prometheus Metrics API: ${hostUrl}/metrics`);
+  console.log(`🔌 Status REST API: ${hostUrl}/api/status\n`);
 });
