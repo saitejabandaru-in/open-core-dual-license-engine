@@ -16,3 +16,7 @@ keys/private.pem
 .env
 .env.local
 *.log
+
+# Maintainer Private Files
+LAUNCH_KIT.md
+
