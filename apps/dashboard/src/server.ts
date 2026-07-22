@@ -36,6 +36,7 @@ app.auditLogger?.logEvent('sec-admin@enterprise.com', 'RBAC_PERMISSION_GRANT', '
 const publicDir = path.join(__dirname, '../public');
 
 const server = http.createServer((req, res) => {
+  // REST API Status
   if (req.url === '/api/status' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
     res.end(
@@ -50,6 +51,34 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // Real-Time Server-Sent Events (SSE) Token Stream
+  if (req.url === '/api/stream' && req.method === 'GET') {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+    });
+
+    const tokens = ['Initializing', 'Swarm', '...', 'Agent', '[Researcher]', 'Analyzing', 'architecture', '...', 'Agent', '[SeniorEngineer]', 'Synthesizing', 'code', '...', 'Ed25519', 'Verified!'];
+    let idx = 0;
+
+    const interval = setInterval(() => {
+      if (idx < tokens.length) {
+        const data = { agent: 'SwarmOrchestrator', token: tokens[idx++], timestamp: Date.now() };
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+      } else {
+        res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+        clearInterval(interval);
+        res.end();
+      }
+    }, 200);
+
+    req.on('close', () => clearInterval(interval));
+    return;
+  }
+
+  // Prometheus Metrics API
   if (req.url === '/metrics' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
     res.end(app.getPrometheusMetrics());
@@ -73,5 +102,6 @@ const server = http.createServer((req, res) => {
 server.listen(port, () => {
   console.log(`\n🌐 [ENTERPRISE DASHBOARD LIVE] ${hostUrl}`);
   console.log(`📊 Prometheus Metrics API: ${hostUrl}/metrics`);
+  console.log(`⚡️ Real-time SSE Token Stream: ${hostUrl}/api/stream`);
   console.log(`🔌 Status REST API: ${hostUrl}/api/status\n`);
 });

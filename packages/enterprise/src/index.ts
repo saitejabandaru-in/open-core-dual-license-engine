@@ -5,6 +5,7 @@ import { EnterpriseSSOManager, IdPType, IdentityProviderConfig, UserIdentitySess
 import { EnterpriseRBAC } from './rbac';
 import { EnterpriseTelemetry } from './telemetry';
 import { EnterpriseSecretsVault, VaultConfig } from './secrets_vault';
+import { LicenseRevocationChecker, RevocationCheckResult } from './revocation';
 
 export { AsymmetricLicenseManager, CommercialLicensePayload, LicenseVerificationResult } from './crypto';
 export { EnterpriseAuditLogger } from './audit_logger';
@@ -12,6 +13,7 @@ export { EnterpriseSSOManager, IdPType, IdentityProviderConfig, UserIdentitySess
 export { EnterpriseRBAC, Role, Permission } from './rbac';
 export { EnterpriseTelemetry } from './telemetry';
 export { EnterpriseSecretsVault, VaultConfig } from './secrets_vault';
+export { LicenseRevocationChecker, RevocationCheckResult } from './revocation';
 
 export class EnterpriseEngine extends CoreEngine {
   public licenseResult: LicenseVerificationResult;
@@ -20,6 +22,7 @@ export class EnterpriseEngine extends CoreEngine {
   public rbac?: EnterpriseRBAC;
   public telemetry?: EnterpriseTelemetry;
   public secretsVault?: EnterpriseSecretsVault;
+  public revocationChecker?: LicenseRevocationChecker;
 
   constructor(licenseKey?: string, publicKeyPem?: string) {
     super();
@@ -56,6 +59,7 @@ export class EnterpriseEngine extends CoreEngine {
     this.ssoManager = new EnterpriseSSOManager();
     this.rbac = new EnterpriseRBAC();
     this.telemetry = new EnterpriseTelemetry(payload.licenseId, payload.customerName, payload.maxNodes, payload.maxSeats);
+    this.revocationChecker = new LicenseRevocationChecker();
 
     // Register Default Okta & Azure AD Identity Adapters
     this.ssoManager.registerProvider({
