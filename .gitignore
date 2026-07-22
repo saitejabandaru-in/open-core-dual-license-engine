@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Private Cryptographic Keys (NEVER COMMIT TO GIT)
+keys/private.pem
+*.key
+*.pem
+!keys/public.pem
+
+# Environment Variables & Logs
+.env
+.env.local
+*.log
