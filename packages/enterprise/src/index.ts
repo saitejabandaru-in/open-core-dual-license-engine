@@ -1,22 +1,25 @@
 import { CoreEngine } from '../../core/src/index';
 import { AsymmetricLicenseManager, CommercialLicensePayload, LicenseVerificationResult } from './crypto';
 import { EnterpriseAuditLogger } from './audit_logger';
-import { EnterpriseSSOProvider } from './sso';
+import { EnterpriseSSOManager, IdPType, IdentityProviderConfig, UserIdentitySession } from './sso';
 import { EnterpriseRBAC } from './rbac';
 import { EnterpriseTelemetry } from './telemetry';
+import { EnterpriseSecretsVault, VaultConfig } from './secrets_vault';
 
 export { AsymmetricLicenseManager, CommercialLicensePayload, LicenseVerificationResult } from './crypto';
 export { EnterpriseAuditLogger } from './audit_logger';
-export { EnterpriseSSOProvider } from './sso';
+export { EnterpriseSSOManager, IdPType, IdentityProviderConfig, UserIdentitySession } from './sso';
 export { EnterpriseRBAC, Role, Permission } from './rbac';
 export { EnterpriseTelemetry } from './telemetry';
+export { EnterpriseSecretsVault, VaultConfig } from './secrets_vault';
 
 export class EnterpriseEngine extends CoreEngine {
   public licenseResult: LicenseVerificationResult;
   public auditLogger?: EnterpriseAuditLogger;
-  public ssoProvider?: EnterpriseSSOProvider;
+  public ssoManager?: EnterpriseSSOManager;
   public rbac?: EnterpriseRBAC;
   public telemetry?: EnterpriseTelemetry;
+  public secretsVault?: EnterpriseSecretsVault;
 
   constructor(licenseKey?: string, publicKeyPem?: string) {
     super();
@@ -39,7 +42,7 @@ export class EnterpriseEngine extends CoreEngine {
     if (this.licenseResult.inGracePeriod) {
       console.warn(
         `\n⚠️  [LICENSE GRACE PERIOD NOTICE] Your commercial license expired on ${payload.expiresAt}.\n` +
-        `   You are operating under a ${payload.gracePeriodDays}-day grace period. Please renew your license to avoid service interruption.\n`
+        `   Operating under a ${payload.gracePeriodDays}-day grace period. Please renew your license.\n`
       );
     } else {
       console.log(
@@ -48,11 +51,26 @@ export class EnterpriseEngine extends CoreEngine {
       );
     }
 
-    // Initialize Enterprise Production Plugins
+    // Initialize Production Enterprise Subsystems
     this.auditLogger = new EnterpriseAuditLogger();
-    this.ssoProvider = new EnterpriseSSOProvider();
+    this.ssoManager = new EnterpriseSSOManager();
     this.rbac = new EnterpriseRBAC();
     this.telemetry = new EnterpriseTelemetry(payload.licenseId, payload.customerName, payload.maxNodes, payload.maxSeats);
+
+    // Register Default Okta & Azure AD Identity Adapters
+    this.ssoManager.registerProvider({
+      type: 'Okta',
+      entityId: 'http://www.okta.com/exk10292',
+      ssoUrl: 'https://enterprise.okta.com/app/sso/saml',
+      certificatePem: 'MOCK_OKTA_CERT',
+    });
+
+    this.ssoManager.registerProvider({
+      type: 'AzureAD',
+      entityId: 'https://sts.windows.net/tenant-id/',
+      ssoUrl: 'https://login.microsoftonline.com/tenant/saml2',
+      certificatePem: 'MOCK_AZURE_CERT',
+    });
   }
 
   public isEnterpriseUnlocked(): boolean {
