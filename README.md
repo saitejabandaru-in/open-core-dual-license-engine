@@ -9,13 +9,21 @@
 
 ---
 
-## ⚡️ Try It In 5 Seconds (1-Line Interactive CLI)
+## 🖥 Web Admin Dashboard Preview
+
+![Enterprise Web Admin Dashboard Preview](./assets/hero_dashboard_preview.png)
+
+---
+
+## ⚡️ Try It In 5 Seconds (1-Line Interactive Terminal CLI)
 
 Run our live interactive terminal swarm playground directly on your machine:
 
 ```bash
 npx tsx apps/interactive-cli/src/index.ts
 ```
+
+![Terminal Swarm Interactive CLI Preview](./assets/terminal_swarm_preview.png)
 
 ---
 
@@ -50,7 +58,7 @@ flowchart TD
     end
 
     Swarm --> Community
-    Enterprise --> SAML[🔐 SAML / SSO Auth]
+    Enterprise --> SAML[🔐 SAML / SSO Auth - Okta, Azure AD, Auth0]
     Enterprise --> Audit[📜 Compliance Audit Logs]
     Enterprise --> RBAC[🛡 Role-Based Access Control]
     Enterprise --> Metrics[📊 Prometheus Metrics Exporter]
@@ -64,7 +72,7 @@ flowchart TD
 | **Tool Execution & Pipeline Processing** | ✅ Included | ✅ Included |
 | **Prometheus Metrics Exporter (`/metrics`)** | ✅ Included | ✅ Included |
 | **Asymmetric Ed25519 License Protection** | ❌ | ✅ Included |
-| **SAML / SSO Authentication Provider** | ❌ | ✅ Included |
+| **SAML / SSO Authentication Provider (Okta, Azure AD, Auth0)** | ❌ | ✅ Included |
 | **Compliance Audit Log Exporter** | ❌ | ✅ Included |
 | **Role-Based Access Control (RBAC)** | ❌ | ✅ Included |
 | **Smart Cloud Container & Domain Binding** | ❌ | ✅ Included |
